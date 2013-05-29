@@ -1,0 +1,41 @@
+#!/usr/bin/env perl
+# use Sys::Syslog qw( :DEFAULT setlogsock );
+# setlogsock('unix');
+# openlog($0,'','user');
+
+# To allow load balancing please choose to the beginning other default settings.
+my $server_num = 0;    # values between 0 and 2 should work on all servers.
+my $server_char = 'a'; # values between a and c should work on all servers.
+$| = 1;
+while (<>) {
+        my $new_URL = '';
+        if (m#\Ahttp://(khm?)(?:[^/]*?)\.(google\.(?:de|com).*)#xms) {
+                $new_URL = "http://${1}0.$2";
+        } elsif (m#\Ahttp://mt[^/]*?\.(google\.com.*)\z#xms) {
+                $new_URL = "http://mt$server_num.$1";
+        } elsif (m#\Ahttp://[^/]+?(tile\.open(?:\w*?)map\.org/.*)#xms) {
+                $new_URL = "http://$1";
+        } elsif (m#\Ahttp://\w\.(www\.toolserver\.org/.*)#xms) {
+                $new_URL = "http://$server_char.$1";
+        } elsif (m#\Ahttp://t\d\.((?:beta\.)?itoworld\.com/.*)#xms) {
+                $new_URL = "http://t$server_num.$1";
+        } elsif (m#\Ahttp://asset\d\.(wheelmap\.org/.*)#xms) {
+                $new_URL = "http://asset$server_num.$1";
+        } elsif (m#\Ahttp://\w\.(tiles\.mapbox\.com/.*)#xms) {
+                $new_URL = "http://$server_char.$1";
+        } elsif (m#\Ahttp://[^/]*?t\d\.(tiles\.virtualearth\.net/.*)#xms) {
+                $new_URL = "http://t$server_num.$1";
+        # } elsif (m/^http:\/\/([A-Za-z]*?)-(.*?)\.(.*)\.youtube\.com\/get_video\?video_id=(.*) /) {
+        #         # http://lax-v290.lax.youtube.com/get_video?video_id=jqx1ZmzX0k0
+        #         print "http://video-srv.youtube.com.SQUIDINTERNAL/get_video?video_id=" . $4;
+        }
+        if ($new_URL eq '') {
+                # syslog('info', "Squid no rewrite: $_");
+                print;
+        }
+        else {
+                # syslog('info', "Squid rewrite: New URL: $new_URL");
+                print $new_URL;
+        }
+}
+# closelog;
