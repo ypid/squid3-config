@@ -13,10 +13,12 @@ while (<>) {
                 $new_URL = "http://${1}0.$2";
         } elsif (m#\Ahttp://mt[^/]*?\.(google\.com.*)\z#xms) {
                 $new_URL = "http://mt$server_num.$1";
-        } elsif (m#\Ahttp://[^/]+?(tile\.open(?:\w*?)map\.org/.*)#xms) {
+        } elsif (m#\Ahttp://[^/]+?(tile\.(?:cloudmade\.com|open(?:\w*?)map\.org)/.*)#xms) {
                 $new_URL = "http://$1";
         } elsif (m#\Ahttp://\w\.(www\.toolserver\.org/.*)#xms) {
                 $new_URL = "http://$server_char.$1";
+        } elsif (m#\Ahttp://tiles\d\.(map\.f4-group\.com/.*)#xms) {
+                $new_URL = "http://tiles$server_num.$1";
         } elsif (m#\Ahttp://t\d\.((?:beta\.)?itoworld\.com/.*)#xms) {
                 $new_URL = "http://t$server_num.$1";
         } elsif (m#\Ahttp://asset\d\.(wheelmap\.org/.*)#xms) {
