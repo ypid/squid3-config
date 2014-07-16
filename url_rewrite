@@ -1,43 +1,64 @@
 #!/usr/bin/env perl
+## @author Robin Schneider <ypid23@aol.de>
+## @licence GPLv3 <http://www.gnu.org/licenses/gpl.html>
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation version 3 of the License.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+use strict;
+use warnings;
+use autodie;
+use utf8;
+# use feature qw(say);
+
 # use Sys::Syslog qw( :DEFAULT setlogsock );
 # setlogsock('unix');
 # openlog($0,'','user');
 
-# To allow load balancing please choose to the beginning other default settings.
-my $server_num = 0;    # values between 0 and 2 should work on all servers.
+# To allow load balancing please choose other default settings at the beginning.
+my $server_num  =  0;   # values between 0 and 2 should work on all servers.
 my $server_char = 'a'; # values between a and c should work on all servers.
+
 $| = 1;
 while (<>) {
-        my $new_URL = '';
-        if (m#\Ahttp://(khm?)(?:[^/]*?)\.(google\.(?:de|com).*)#xms) {
-                $new_URL = "http://${1}0.$2";
-        } elsif (m#\Ahttp://mt[^/]*?\.(google\.com.*)\z#xms) {
-                $new_URL = "http://mt$server_num.$1";
-        } elsif (m#\Ahttp://[^/]+?(tile\.(?:cloudmade\.com|open(?:\w*?)map\.org)/.*)#xms) {
-                $new_URL = "http://$1";
-        } elsif (m#\Ahttp://\w\.(www\.toolserver\.org/.*)#xms) {
-                $new_URL = "http://$server_char.$1";
-        } elsif (m#\Ahttp://tiles\d\.(map\.f4-group\.com/.*)#xms) {
-                $new_URL = "http://tiles$server_num.$1";
-        } elsif (m#\Ahttp://t\d\.((?:beta\.)?itoworld\.com/.*)#xms) {
-                $new_URL = "http://t$server_num.$1";
-        } elsif (m#\Ahttp://asset\d\.(wheelmap\.org/.*)#xms) {
-                $new_URL = "http://asset$server_num.$1";
-        } elsif (m#\Ahttp://\w\.(tiles\.mapbox\.com/.*)#xms) {
-                $new_URL = "http://$server_char.$1";
-        } elsif (m#\Ahttp://[^/]*?t\d\.(tiles\.virtualearth\.net/.*)#xms) {
-                $new_URL = "http://t$server_num.$1";
-        # } elsif (m/^http:\/\/([A-Za-z]*?)-(.*?)\.(.*)\.youtube\.com\/get_video\?video_id=(.*) /) {
-        #         # http://lax-v290.lax.youtube.com/get_video?video_id=jqx1ZmzX0k0
-        #         print "http://video-srv.youtube.com.SQUIDINTERNAL/get_video?video_id=" . $4;
-        }
-        if ($new_URL eq '') {
-                # syslog('info', "Squid no rewrite: $_");
-                print;
-        }
-        else {
-                # syslog('info', "Squid rewrite: New URL: $new_URL");
-                print $new_URL;
-        }
+    my $new_URL = q( );
+    if (m#\Ahttp://(khm?)(?:[^/]*?)\.(google\.(?:de|com).*)#xms) {
+        $new_URL = "http://${1}0.$2";
+    } elsif (m#\Ahttp://mt[^/]*?\.(google\.com.*)\z#xms) {
+        $new_URL = "http://mt$server_num.$1";
+    } elsif (m#\Ahttp://[^/]+?(tile\.(?:cloudmade\.com|open(?:\w*?)map\.org)/.*)#xms) {
+        $new_URL = "http://$1";
+    } elsif (m#\Ahttp://\w\.(www\.toolserver\.org/.*)#xms) {
+        $new_URL = "http://$server_char.$1";
+    } elsif (m#\Ahttp://tiles\d\.(map\.f4-group\.com/.*)#xms) {
+        $new_URL = "http://tiles$server_num.$1";
+    } elsif (m#\Ahttp://t\d\.((?:beta\.)?itoworld\.com/.*)#xms) {
+        $new_URL = "http://t$server_num.$1";
+    } elsif (m#\Ahttp://asset\d\.(wheelmap\.org/.*)#xms) {
+        $new_URL = "http://asset$server_num.$1";
+    } elsif (m#\Ahttp://\w\.(tiles\.mapbox\.com/.*)#xms) {
+        $new_URL = "http://$server_char.$1";
+    } elsif (m#\Ahttp://[^/]*?t\d\.(tiles\.virtualearth\.net/.*)#xms) {
+        $new_URL = "http://t$server_num.$1";
+    # } elsif (m/^http:\/\/([A-Za-z]*?)-(.*?)\.(.*)\.youtube\.com\/get_video\?video_id=(.*) /) {
+        # # http://lax-v290.lax.youtube.com/get_video?video_id=jqx1ZmzX0k0
+        # print "http://video-srv.youtube.com.SQUIDINTERNAL/get_video?video_id=" . $4;
+    }
+    if ($new_URL eq q( )) {
+        # syslog('info', "Squid no rewrite: $_");
+        print;
+    }
+    else {
+        # syslog('info', "Squid rewrite: New URL: $new_URL");
+        print $new_URL;
+    }
 }
 # closelog;
