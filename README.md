@@ -1,6 +1,6 @@
 # My Squid 3 configuration
-This is the configuration that I use to survive the really bad bandwidth of
-around 50 kByte/s down link that I get from the "Deutsche Telekom".
+This is the configuration that I used to survive the really bad bandwidth of
+around 50 kByte/s down link that I got from the "Deutsche Telekom".
 
 # Features
 * A lot of fine tuned [refresh rules][refresh-pattern] for certain sites to
